@@ -1,0 +1,25 @@
+{
+  "name": "tgcrm-base",
+  "version": "1.0.0",
+  "description": "TGcrm on Base: AI agents pay per Telegram-handle lookup in USDC (x402), and Pro users buy lookup packs in USDC (Base Pay).",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test",
+    "demo": "node scripts/x402-agent-demo.mjs"
+  },
+  "dependencies": {
+    "@base-org/account": "^2.5.13",
+    "@coinbase/cdp-sdk": "^1.58.0",
+    "@x402/core": "^2.28.0",
+    "@x402/evm": "^2.28.0",
+    "@x402/express": "^2.28.0",
+    "@x402/extensions": "^2.28.0",
+    "@x402/fetch": "^2.28.0",
+    "@x402/svm": "^2.28.0",
+    "express": "^4.18.2"
+  }
+}
