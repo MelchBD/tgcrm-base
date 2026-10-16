@@ -28,3 +28,8 @@ create index if not exists usdc_orders_user_idx on usdc_orders(telegram_id, stat
 alter table usdc_orders enable row level security;
 drop policy if exists usdc_orders_service_all on usdc_orders;
 create policy usdc_orders_service_all on usdc_orders for all to service_role using (true) with check (true);
+
+-- Refunds: when a paid-credit batch ends early, the credits for domains that never returned a result are handed back.
+-- This column is the idempotency marker (NULL = not settled yet). It is claimed with a compare-and-swap BEFORE
+-- crediting, so concurrent polls and the background sweep can never refund the same search twice.
+alter table tg_finder_searches add column if not exists credits_refunded integer;

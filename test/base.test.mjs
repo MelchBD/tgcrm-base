@@ -311,3 +311,16 @@ await t('maps company links + member links; CSV member without x_url drops x_han
 
 // The x402 boot attempts a real (fake-credential) call to Coinbase and leaves a 30s timeout pending; don't wait for it.
 after(() => setTimeout(() => process.exit(process.exitCode || 0), 250));
+
+// ── completed-domain counting (what a refund for an early-ending batch is computed from) ──
+test('summarizeBatch: counts delivered companies and exposes partial results while the batch is still running', () => {
+  const ok = d => ({ domain: d, status: 'completed', result: { company_name: d, social_links: {}, team_members: [] } });
+  const running = summarizeBatch({ status: 'running', results: [ok('a.com'), ok('b.com'), { domain: 'c.com', status: 'failed', result: null }] });
+  assert.equal(running.isTerminal, false);
+  assert.equal(running.resultSummary, null, 'nothing is stored/served as a result until the batch finishes');
+  assert.equal(running.completedCount, 2);
+  assert.deepEqual(running.partialSummary.map(c => c.company_name), ['a.com', 'b.com']);
+  const done = summarizeBatch({ status: 'failed', results: [ok('a.com')] });
+  assert.equal(done.isTerminal, true); assert.equal(done.resultSummary.length, 1); assert.equal(done.completedCount, 1);
+  assert.equal(summarizeBatch({ status: 'running' }).completedCount, 0);
+});
